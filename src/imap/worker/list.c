@@ -38,5 +38,5 @@ void handle_worker_list(struct worker_pipe *pipe, struct worker_message *message
 	struct list_data *data = malloc(sizeof(struct list_data));
 	data->pipe = pipe; data->message = message;
 	worker_post_message(pipe, WORKER_ACK, message, NULL);
-	imap_list(imap, imap_list_callback, data, "", "%");
+	imap_list(imap, imap_list_callback, data, "", "*");
 }
