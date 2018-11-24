@@ -14,6 +14,21 @@
 #include "worker.h"
 #include "log.h"
 
+static const char *split(const char *str, char sep)
+{
+	unsigned int start = 0, stop;
+	for (stop = 0; str[stop]; stop++) {
+		if (str[stop] == sep) {
+			char *dest = malloc(stop + 1);
+			strncpy(dest, str + start, stop);
+			dest[stop] = '\0';
+			return dest;
+		}
+	}
+
+	return NULL;
+}
+
 static void clear_remaining(struct tb_cell *cell, struct geometry geo) {
 	cell->ch = ' ';
 	for (int _y = 0; _y < geo.height; ++_y) {
@@ -220,8 +235,9 @@ void render_item(struct geometry geo, struct aerc_message *message, bool selecte
 		char date[64];
 		strftime(date, sizeof(date), config->ui.timestamp_format,
 				message->internal_date);
+		const char *from = split(get_message_header(message, "From"), '<');
 		const char *subject = get_message_header(message, "Subject");
-		int l = tb_printf(geo.x, geo.y, &cell, "%s %s", date, subject);
+		int l = tb_printf(geo.x, geo.y, &cell, "%s %s %s", subject, from ,date);
 		geo.x += l;
 		geo.width -= 1;
 		geo.height = 1;
